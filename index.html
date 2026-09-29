@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronología SIGESAPOL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Librería para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Librería para Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto" id="contenidoImprimible">
+        <header class="mb-8 text-center fade-in">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 tracking-tight">Evolución de <span class="text-indigo-600">SIGESAPOL</span></h1>
+            <p class="text-lg text-slate-500">Línea de tiempo colaborativa de pases a producción</p>
+        </header>
+
+        <!-- RESUMEN EN LÍNEA DE TIEMPO CON TOOLTIPS -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 fade-in">
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-between">
+                <span><i class="fas fa-chart-line text-indigo-600 mr-1"></i> Resumen de Avance Por Año</span>
+                <span class="text-xs normal-case text-slate-400 font-normal">Pasa el cursor sobre un año para ver el detalle</span>
+            </h2>
+            <div id="resumenAños" class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+                
+                <div class="relative group p-3 bg-slate-50 rounded-xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all cursor-pointer">
+                    <span class="block text-xs font-semibold text-slate-400 group-hover:text-indigo-600">2022</span>
+                    <span id="count2022" class="text-lg font-bold text-indigo-600">0</span> <span class="text-xs text-slate-500">módulos</span>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:block w-64 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl z-20 text-left pointer-events-none">
+                        <p class="font-bold border-b border-slate-700 pb-1 mb-1 text-indigo-300">Módulos 2022:</p>
+                        <ul id="list2022" class="list-disc pl-4 space-y-1 text-slate-200"><li>Sin datos</li></ul>
+                    </div>
+                </div>
+
+                <div class="relative group p-3 bg-slate-50 rounded-xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all cursor-pointer">
+                    <span class="block text-xs font-semibold text-slate-400 group-hover:text-indigo-600">2023</span>
+                    <span id="count2023" class="text-lg font-bold text-indigo-600">0</span> <span class="text-xs text-slate-500">módulos</span>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:block w-64 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl z-20 text-left pointer-events-none">
+                        <p class="font-bold border-b border-slate-700 pb-1 mb-1 text-indigo-300">Módulos 2023:</p>
+                        <ul id="list2023" class="list-disc pl-4 space-y-1 text-slate-200"><li>Sin datos</li></ul>
+                    </div>
+                </div>
+
+                <div class="relative group p-3 bg-slate-50 rounded-xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all cursor-pointer">
+                    <span class="block text-xs font-semibold text-slate-400 group-hover:text-indigo-600">2024</span>
+                    <span id="count2024" class="text-lg font-bold text-indigo-600">0</span> <span class="text-xs text-slate-500">módulos</span>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:block w-64 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl z-20 text-left pointer-events-none">
+                        <p class="font-bold border-b border-slate-700 pb-1 mb-1 text-indigo-300">Módulos 2024:</p>
+                        <ul id="list2024" class="list-disc pl-4 space-y-1 text-slate-200"><li>Sin datos</li></ul>
+                    </div>
+                </div>
+
+                <div class="relative group p-3 bg-slate-50 rounded-xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all cursor-pointer">
+                    <span class="block text-xs font-semibold text-slate-400 group-hover:text-indigo-600">2025</span>
+                    <span id="count2025" class="text-lg font-bold text-indigo-600">0</span> <span class="text-xs text-slate-500">módulos</span>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:block w-64 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl z-20 text-left pointer-events-none">
+                        <p class="font-bold border-b border-slate-700 pb-1 mb-1 text-indigo-300">Módulos 2025:</p>
+                        <ul id="list2025" class="list-disc pl-4 space-y-1 text-slate-200"><li>Sin datos</li></ul>
+                    </div>
+                </div>
+
+                <div class="relative group p-3 bg-emerald-50 rounded-xl border border-emerald-200 hover:bg-emerald-100 transition-all cursor-pointer col-span-2 sm:col-span-1">
+                    <span class="block text-xs font-semibold text-emerald-600">2026</span>
+                    <span id="count2026" class="text-lg font-bold text-emerald-700">0</span> <span class="text-xs text-emerald-600">módulos</span>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:block w-64 p-3 bg-slate-900 text-white text-xs rounded-xl shadow-xl z-20 text-left pointer-events-none">
+                        <p class="font-bold border-b border-slate-700 pb-1 mb-1 text-emerald-400">Módulos 2026:</p>
+                        <ul id="list2026" class="list-disc pl-4 space-y-1 text-slate-200"><li>Sin datos</li></ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Buscador, Botones de Descarga y Botón Agregar -->
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-10 fade-in bg-white p-4 rounded-xl shadow-sm border border-slate-200" data-html2canvas-ignore="true">
+            <div class="relative w-full md:w-1/3">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-search text-slate-400"></i></span>
+                <input type="text" id="searchInput" onkeyup="window.filtrarTimeline()" placeholder="Buscar..." class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                <button onclick="window.descargarPDF()" class="px-4 py-3 bg-rose-600 text-white font-bold rounded-lg hover:bg-rose-700 shadow-md flex items-center justify-center gap-2 text-sm transition-colors">
+                    <i class="fas fa-file-pdf"></i> PDF (Sin imágenes)
+                </button>
+                <button onclick="window.descargarExcel()" class="px-4 py-3 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 shadow-md flex items-center justify-center gap-2 text-sm transition-colors">
+                    <i class="fas fa-file-excel"></i> Exportar Excel
+                </button>
+                <button onclick="window.cargarIniciales()" id="btnCargarIniciales" class="hidden px-4 py-3 bg-indigo-50 text-indigo-700 font-bold rounded-lg hover:bg-indigo-100 shadow-sm border border-indigo-200 text-sm">
+                    <i class="fas fa-database mr-1"></i> Cargar Hitos
+                </button>
+                <button onclick="window.abrirModalNuevo()" class="px-5 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-md flex items-center justify-center gap-2 text-sm">
+                    <i class="fas fa-plus"></i> Nuevo Hito
+                </button>
+            </div>
+        </div>
+
+        <!-- Contenedor del Timeline -->
+        <div id="loading" class="text-center text-indigo-600 font-bold py-8">Cargando datos desde Firebase...</div>
+        <div class="relative border-l-4 border-indigo-200 ml-4 md:ml-12" id="timelineContainer"></div>
+    </div>
+
+    <!-- Modal Formulario (Crear / Editar) -->
+    <div id="modalAgregar" class="fixed inset-0 bg-slate-900 bg-opacity-50 hidden flex items-center justify-center z-50 px-4" data-html2canvas-ignore="true">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 md:p-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modalTitulo" class="text-2xl font-bold">Agregar Nuevo Módulo</h2>
+                <button onclick="window.cerrarModal()" class="text-slate-400 hover:text-red-500 text-2xl">&times;</button>
+            </div>
+            <form id="formNuevoHito" onsubmit="window.guardarHito(event)" class="space-y-4">
+                <input type="hidden" id="editDocId" value="">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre del Módulo *</label>
+                    <input type="text" id="inputTitulo" required placeholder="Ej: Módulo de Farmacia" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Categoría / Color *</label>
+                    <select id="inputCategoria" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                        <option value="emergencia">🔴 Emergencia / Urgencias</option>
+                        <option value="ambulatorio">🔵 Ambulatorio / Consultas</option>
+                        <option value="diagnostico">🟣 Diagnóstico (Imágenes / Lab)</option>
+                        <option value="quirurgico">🟢 Quirófano / Procedimientos</option>
+                        <option value="gestion">🟡 Gestión / Enfermería / Firmas</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Fecha (DD/MM/AAAA) *</label>
+                    <input type="text" id="inputFecha" required placeholder="DD/MM/AAAA" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Descripción / Opciones *</label>
+                    <textarea id="inputDescripcion" required rows="3" placeholder="Opciones desplegadas en este módulo..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Enlace de la Imagen / Captura (Opcional)</label>
+                    <input type="url" id="inputImagen" placeholder="https://i.imgur.com/tu-imagen.png" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Enlace del PDF (Opcional)</label>
+                    <input type="url" id="inputPdf" placeholder="https://drive.google.com/..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="window.cerrarModal()" class="px-5 py-2 text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">Cancelar</button>
+                    <button type="submit" id="btnGuardar" class="px-5 py-2 text-white font-semibold bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow-md">Guardar Hito</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LÓGICA DE FIREBASE, RENDERIZADO Y EXPORTACIÓN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCFkSC_spnQH2UCo7-LBDy-9QyelPttyU",
+            authDomain: "cronolig.firebaseapp.com",
+            projectId: "cronolig",
+            storageBucket: "cronolig.firebasestorage.app",
+            messagingSenderId: "80735471654",
+            appId: "1:80735471654:web:dbfc35598b0e396dc17ee7",
+            measurementId: "G-91NV1HLRTF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let datosEnMemoria = [];
+        let mapaDocumentos = {};
+
+        const estilosCategoria = {
+            emergencia: { bgIcon: "bg-rose-600", textBadge: "text-rose-700 bg-rose-50", borderCard: "border-rose-200 hover:border-rose-400" },
+            ambulatorio: { bgIcon: "bg-sky-600", textBadge: "text-sky-700 bg-sky-50", borderCard: "border-sky-200 hover:border-sky-400" },
+            diagnostico: { bgIcon: "bg-purple-600", textBadge: "text-purple-700 bg-purple-50", borderCard: "border-purple-200 hover:border-purple-400" },
+            quirurgico: { bgIcon: "bg-emerald-600", textBadge: "text-emerald-700 bg-emerald-50", borderCard: "border-emerald-200 hover:border-emerald-400" },
+            gestion: { bgIcon: "bg-amber-600", textBadge: "text-amber-700 bg-amber-50", borderCard: "border-amber-200 hover:border-amber-400" }
+        };
+
+        function obtenerFechaActualFormat() {
+            const hoy = new Date();
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+            const anio = hoy.getFullYear();
+            return `${dia}/${mes}/${anio}`;
+        }
+
+        window.abrirModalNuevo = () => {
+            document.getElementById('editDocId').value = "";
+            document.getElementById('modalTitulo').innerText = "Agregar Nuevo Módulo";
+            document.getElementById('formNuevoHito').reset();
+            document.getElementById('inputFecha').value = obtenerFechaActualFormat();
+            document.getElementById('modalAgregar').classList.remove('hidden');
+        };
+
+        window.abrirModalEditar = (id) => {
+            const hito = mapaDocumentos[id];
+            if (!hito) return;
+
+            document.getElementById('editDocId').value = id;
+            document.getElementById('modalTitulo').innerText = "Editar Módulo";
+            document.getElementById('inputTitulo').value = hito.titulo || "";
+            document.getElementById('inputCategoria').value = hito.categoria || "ambulatorio";
+            document.getElementById('inputFecha').value = hito.fecha || "";
+            document.getElementById('inputDescripcion').value = hito.desc || "";
+            document.getElementById('inputImagen').value = hito.imagen || "";
+            document.getElementById('inputPdf').value = hito.pdf || "";
+
+            document.getElementById('modalAgregar').classList.remove('hidden');
+        };
+
+        window.cerrarModal = () => {
+            document.getElementById('modalAgregar').classList.add('hidden');
+            document.getElementById('formNuevoHito').reset();
+            document.getElementById('editDocId').value = "";
+        };
+
+        window.eliminarHito = async (id) => {
+            if (confirm("¿Estás seguro de que deseas eliminar este registro?")) {
+                try {
+                    await deleteDoc(doc(db, "hitos_sigesapol", id));
+                } catch (error) {
+                    console.error("Error al eliminar:", error);
+                    alert("Hubo un error al intentar eliminar el hito.");
+                }
+            }
+        };
+
+        window.descargarPDF = () => {
+            const imagenes = document.querySelectorAll('.contenedor-imagen');
+            imagenes.forEach(img => img.style.display = 'none');
+
+            const elemento = document.getElementById('contenidoImprimible');
+            const opciones = {
+                margin:       0.3,
+                filename:     'Cronologia_SIGESAPOL_Resumen.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opciones).from(elemento).save().then(() => {
+                imagenes.forEach(img => img.style.display = 'block');
+            });
+        };
+
+        window.descargarExcel = () => {
+            if (datosEnMemoria.length === 0) {
+                alert("No hay datos para exportar.");
+                return;
+            }
+
+            const dataFormatted = datosEnMemoria.map(item => ({
+                "Módulo": item.titulo || "",
+                "Categoría": item.categoria || "",
+                "Fecha (DD/MM/AAAA)": item.fecha || "",
+                "Descripción": item.desc || "",
+                "Documento PDF": item.pdf || "N/A",
+                "Imagen Captura": item.imagen || "N/A"
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(dataFormatted);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Cronología SIGESAPOL");
+            XLSX.writeFile(workbook, "Cronologia_SIGESAPOL.xlsx");
+        };
+
+        window.guardarHito = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnGuardar');
+            btn.innerText = "Guardando..."; btn.disabled = true;
+
+            const docId = document.getElementById('editDocId').value;
+            const dataObj = {
+                titulo: document.getElementById('inputTitulo').value,
+                categoria: document.getElementById('inputCategoria').value,
+                fecha: document.getElementById('inputFecha').value,
+                desc: document.getElementById('inputDescripcion').value,
+                imagen: document.getElementById('inputImagen').value,
+                pdf: document.getElementById('inputPdf').value,
+                icono: "fa-rocket"
+            };
+
+            try {
+                if (docId) {
+                    await updateDoc(doc(db, "hitos_sigesapol", docId), dataObj);
+                } else {
+                    await addDoc(collection(db, "hitos_sigesapol"), {
+                        ...dataObj,
+                        timestamp: serverTimestamp()
+                    });
+                }
+                window.cerrarModal();
+            } catch (error) {
+                console.error("Error al guardar:", error);
+                alert("Hubo un error al guardar las modificaciones.");
+            }
+            btn.innerText = "Guardar Hito"; btn.disabled = false;
+        };
+
+        window.cargarIniciales = async () => {
+            const btn = document.getElementById('btnCargarIniciales');
+            btn.disabled = true; btn.innerText = "Cargando...";
+
+            const hitosBase = [
+                { titulo: "Módulo Ambulatorio", categoria: "ambulatorio", fecha: "05/11/2022", desc: "Registro de citas, Citas médicas, Reprogramación de personal y Atenciones médicas.", icono: "fa-calendar-check", imagen: "" },
+                { titulo: "Módulo de Emergencia", categoria: "emergencia", fecha: "02/08/2023", desc: "Triaje, Admisión, Atención (recetas), Evaluación (recetas) y Altas.", icono: "fa-ambulance", imagen: "" },
+                { titulo: "Módulo de Interconsultas", categoria: "ambulatorio", fecha: "15/01/2024", desc: "Implementación para los tipos de atención de Emergencia y Hospitalización.", icono: "fa-user-md", imagen: "" },
+                { titulo: "Módulo de Hospitalización", categoria: "emergencia", fecha: "10/12/2024", desc: "Admisión, Historia clínica, Evolución y Alta.", icono: "fa-bed", imagen: "" },
+                { titulo: "Módulo de Imágenes", categoria: "diagnostico", fecha: "01/04/2025", desc: "Implementación transversal para Ambulatorio, Emergencia y Hospitalización.", icono: "fa-x-ray", imagen: "" },
+                { titulo: "Módulo de Enfermería (Fase 1)", categoria: "gestion", fecha: "15/05/2025", desc: "Implementación para el tipo de atención de Emergencia.", icono: "fa-user-nurse", imagen: "" },
+                { titulo: "Módulo de Laboratorio (Fase 1)", categoria: "diagnostico", fecha: "14/07/2025", desc: "Implementación para el tipo de atención de Emergencia.", icono: "fa-flask", imagen: "" },
+                { titulo: "Módulo de Enfermería (Fase 2)", categoria: "gestion", fecha: "15/08/2025", desc: "Implementación transversal para Hospitalización y Ambulatorio.", icono: "fa-notes-medical", imagen: "" },
+                { titulo: "Módulo de Centro Quirúrgico", categoria: "quirurgico", fecha: "01/10/2025", desc: "Inicio de marcha blanca.", icono: "fa-procedures", imagen: "" },
+                { titulo: "Módulo de Firmas Masivas (Médicos)", categoria: "gestion", fecha: "15/01/2026", desc: "Implementación de la funcionalidad de firmas masivas para el personal médico.", icono: "fa-file-signature", imagen: "" },
+                { titulo: "Módulo de Laboratorio (Fase 2)", categoria: "diagnostico", fecha: "12/04/2026", desc: "Implementación para el tipo de atención de Hospitalización.", icono: "fa-vial", imagen: "" },
+                { titulo: "Módulo de Firmas de Enfermería (Nivel III)", categoria: "gestion", fecha: "25/09/2026", desc: "Implementación de la bandeja centralizada y reglas de firma masiva por turnos.", icono: "fa-check-double", imagen: "" }
+            ];
+
+            for (const hito of hitosBase) {
+                await addDoc(collection(db, "hitos_sigesapol"), { ...hito, pdf: "", timestamp: serverTimestamp() });
+            }
+        };
+
+        const q = query(collection(db, "hitos_sigesapol"), orderBy("timestamp", "desc"));
+        
+        onSnapshot(q, (snapshot) => {
+            document.getElementById('loading').style.display = 'none';
+            const container = document.getElementById('timelineContainer');
+            const btnIniciales = document.getElementById('btnCargarIniciales');
+            container.innerHTML = ''; 
+            datosEnMemoria = [];
+            mapaDocumentos = {};
+
+            let counts = { 2022: 0, 2023: 0, 2024: 0, 2025: 0, 2026: 0 };
+            let titulosPorAño = { 2022: [], 2023: [], 2024: [], 2025: [], 2026: [] };
+
+            if (snapshot.empty) {
+                btnIniciales.classList.remove('hidden');
+                container.innerHTML = '<p class="text-slate-500 italic pl-4">Base de datos vacía. Haz clic en "Cargar Hitos" para poblarla.</p>';
+                return;
+            } else {
+                btnIniciales.classList.add('hidden');
+            }
+
+            snapshot.forEach((docSnap) => {
+                const id = docSnap.id;
+                const hito = docSnap.data();
+                
+                datosEnMemoria.push(hito);
+                mapaDocumentos[id] = hito;
+
+                const estilo = estilosCategoria[hito.categoria] || estilosCategoria.ambulatorio;
+
+                for (let año in counts) {
+                    if (hito.fecha && hito.fecha.includes(año)) { 
+                        counts[año]++; 
+                        titulosPorAño[año].push(hito.titulo);
+                    }
+                }
+
+                let imgHtml = hito.imagen ? `
+                    <div class="contenedor-imagen mt-4 overflow-hidden rounded-xl border border-slate-200 shadow-inner max-h-56">
+                        <img src="${hito.imagen}" alt="${hito.titulo}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                    </div>` : '';
+
+                let btnPdfHtml = hito.pdf ? `
+                    <a href="${hito.pdf}" target="_blank" class="inline-flex items-center mt-4 px-4 py-2 text-sm font-semibold text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-600 hover:text-white transition-colors">
+                        <i class="fas fa-file-pdf mr-2 text-lg"></i> Ver Documento
+                    </a>` : '';
+
+                let cardHtml = `
+                <div class="timeline-item mb-12 ml-8 md:ml-12 group relative fade-in">
+                    <span class="absolute flex items-center justify-center w-12 h-12 ${estilo.bgIcon} text-white rounded-full -left-[42px] md:-left-[50px] ring-4 ring-slate-100 shadow-lg transition-transform duration-300 group-hover:scale-110">
+                        <i class="fas ${hito.icono || 'fa-check'} text-xl"></i>
+                    </span>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-2 ${estilo.borderCard} transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-3 gap-2">
+                            <h3 class="text-xl font-bold text-slate-800 item-titulo">${hito.titulo}</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block px-3 py-1 text-sm font-bold ${estilo.textBadge} rounded-full w-max item-fecha">${hito.fecha}</span>
+                                <div class="flex items-center gap-1 ml-2" data-html2canvas-ignore="true">
+                                    <button onclick="window.abrirModalEditar('${id}')" title="Editar hito" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button onclick="window.eliminarHito('${id}')" title="Eliminar hito" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed item-desc">${hito.desc}</p>
+                        ${imgHtml}
+                        ${btnPdfHtml}
+                    </div>
+                </div>`;
+                container.innerHTML += cardHtml;
+            });
+
+            for (let año in counts) {
+                const countEl = document.getElementById(`count${año}`);
+                const listEl = document.getElementById(`list${año}`);
+
+                if (countEl) countEl.innerText = counts[año];
+                if (listEl) {
+                    if (titulosPorAño[año].length > 0) {
+                        listEl.innerHTML = titulosPorAño[año].map(t => `<li>${t}</li>`).join('');
+                    } else {
+                        listEl.innerHTML = '<li class="italic text-slate-400">Sin hitos registrados</li>';
+                    }
+                }
+            }
+        });
+
+        window.filtrarTimeline = () => {
+            const filtro = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.timeline-item');
+            items.forEach(item => {
+                const txt = item.textContent.toLowerCase();
+                item.style.display = txt.includes(filtro) ? "" : "none";
+            });
+        };
+    </script>
+</body>
+</html>
